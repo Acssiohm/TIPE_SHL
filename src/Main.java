@@ -75,7 +75,7 @@ public class Main {
     public static void algo() {
         BufferedImage img;
         try {
-            img = ImageIO.read(new File("./src/carton_jaune3.jpeg"));
+            img = ImageIO.read(new File("./src/carton_rouge.jpg"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -98,6 +98,7 @@ public class Main {
 
                 double[] clr_lab = RGBtoLab(r, g, b);
                 double score = closeness_score(clr_lab, ref_lab);
+                //score = (double)r /Math.sqrt( r*r + g*g + b*b );
                 if (score > 0.9) {
                     score = 1;
                 }
@@ -157,8 +158,8 @@ public class Main {
 
     public static void ParamsBaseValue() {
         params.put("r", 255d);
-        params.put("g", 255d);
-        params.put("b", 80d);
+        params.put("g", 0d);
+        params.put("b", 0d);
         params.put("sigma", 50d);
         params.put("lf", 2d);
         params.put("af", 8d);
@@ -166,7 +167,9 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        ParamsBaseValue();
+        new SoundExtracting();
+        
+        /*ParamsBaseValue();
         window = new Window();
         Scanner in = new Scanner(System.in);
         algo();
@@ -174,6 +177,6 @@ public class Main {
         while(!Objects.equals(s, "end")) {
             HandleCmd(s);
             s = in.nextLine();
-        }
+        }*/
     }
 }
