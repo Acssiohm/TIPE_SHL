@@ -1,13 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b2936413-6145-42e1-87d9-8e56ca6997c7" name="Changes" comment="images test">
-      <change afterPath="$PROJECT_DIR$/src/SoundExtracting.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/velvet-video-0.5.2.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/video.mp4" afterDir="false" />
+    <list default="true" id="b2936413-6145-42e1-87d9-8e56ca6997c7" name="Changes" comment="test d'audio">
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Image.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ColorHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Matrix.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/WavFile.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/WavFileException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/img/match.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/img/public.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/img/tileshop.jpeg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TIPE_SHL.iml" beforeDir="false" afterPath="$PROJECT_DIR$/TIPE_SHL.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SoundExtracting.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SoundExtracting.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/carton_jaune.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/src/img/carton_jaune.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/carton_jaune2.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/src/img/carton_jaune2.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/carton_jaune3.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/src/img/carton_jaune3.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/carton_rouge.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/src/img/carton_rouge.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/carton_rouge_toutrouge.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/src/img/carton_rouge_toutrouge.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hsv_101.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/img/hsv_101.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,21 +49,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/hamri/IdeaProjects/untitled/velvet-video-0.5.2.jar&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "C:/Users/hamri/IdeaProjects/untitled/velvet-video-0.5.2.jar",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\hamri\IdeaProjects\untitled\src" />
     </key>
   </component>
   <component name="RunManager">
@@ -71,7 +90,16 @@
       <updated>1700830080287</updated>
       <workItem from="1700830081827" duration="34718000" />
       <workItem from="1702642028022" duration="6127000" />
-      <workItem from="1702815744163" duration="7569000" />
+      <workItem from="1702815744163" duration="10116000" />
+      <workItem from="1703247597169" duration="5614000" />
+      <workItem from="1703608248242" duration="6889000" />
+      <workItem from="1703707365761" duration="14000" />
+      <workItem from="1705066209154" duration="1261000" />
+      <workItem from="1706272542275" duration="4932000" />
+      <workItem from="1706875553314" duration="6197000" />
+      <workItem from="1709294904786" duration="6414000" />
+      <workItem from="1709899644966" duration="13634000" />
+      <workItem from="1711109911316" duration="397000" />
     </task>
     <task id="LOCAL-00001" summary="détection de couleurs avec L* a* b*">
       <created>1701432966806</created>
@@ -94,7 +122,21 @@
       <option name="project" value="LOCAL" />
       <updated>1701540325657</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="test d'audio">
+      <created>1702823799188</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1702823799188</updated>
+    </task>
+    <task id="LOCAL-00005" summary="test d'audio">
+      <created>1702823841008</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1702823841008</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -105,7 +147,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -116,6 +170,7 @@
     <MESSAGE value="détection de couleurs avec L* a* b*" />
     <MESSAGE value="Plus propre" />
     <MESSAGE value="images test" />
-    <option name="LAST_COMMIT_MESSAGE" value="images test" />
+    <MESSAGE value="test d'audio" />
+    <option name="LAST_COMMIT_MESSAGE" value="test d'audio" />
   </component>
 </project>

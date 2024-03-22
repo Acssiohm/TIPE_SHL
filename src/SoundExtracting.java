@@ -3,66 +3,106 @@ import com.zakgof.velvetvideo.IAudioFrame;
 import com.zakgof.velvetvideo.IDemuxer;
 import com.zakgof.velvetvideo.IVelvetVideoLib;
 import com.zakgof.velvetvideo.impl.VelvetVideoLib;
-
+import java.io.*;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import java.io.File;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 
+import static java.lang.Math.min;
+
 public class SoundExtracting {
-    public SoundExtracting() {
-        int totalFramesRead = 0;
-        File fileIn = new File("video.wav");
-// somePathName is a pre-existing string whose value was
-// based on a user selection.
-        try {
-            AudioInputStream audioInputStream =
-                    AudioSystem.getAudioInputStream(fileIn);
-            int bytesPerFrame =
-                    audioInputStream.getFormat().getFrameSize();
-            if (bytesPerFrame == AudioSystem.NOT_SPECIFIED) {
-                // some audio formats may have unspecified frame size
-                // in that case we may read any amount of bytes
-                bytesPerFrame = 1;
-            }
-            // Set an arbitrary buffer size of 1024 frames.
-            int numBytes = 1024 * bytesPerFrame;
-            byte[] audioBytes = new byte[numBytes];
-            long[] result = new long[1024];
-            try {
-                int numBytesRead = 0;
-                int numFramesRead = 0;
-                // Try to read numBytes bytes from the file.
-                while ((numBytesRead =
-                        audioInputStream.read(audioBytes)) != -1) {
-                    // Calculate the number of frames actually read.
-                    numFramesRead = numBytesRead / bytesPerFrame;
-                    totalFramesRead += numFramesRead;
-                    // Here, do something useful with the audio data that's
-                    // now in the audioBytes array...
-                    for(int i = 0; i < 1024; i++) {
-                        byte [] resb = new byte[4];
-                        System.arraycopy(audioBytes, 4 * i, resb, 0, 4);
-                        int value = 0;
-                        for (byte b : resb) {
-                            value = (value << 8) + (b & 0xFF);
-                        }
-                        result[i] = value;
-                        if(4*i >= numBytesRead){
-                            result[i] = 0;
-                        }
-                    }
-                    String r = Arrays.toString(result);
-                    System.out.print(r.substring(1, r.length() -1));
-                    System.out.println(",");
-                }
-                System.out.println(bytesPerFrame);
-            } catch (Exception ex) {
-                // Handle the error...
-            }
-        } catch (Exception e) {
-            // Handle the error...
-        }
-    }
+
+	public SoundExtracting() {
+		try {
+			// Open the wav file specified as the first argument
+			WavFile wavFile = WavFile.openWavFile(new File("video.wav"));
+
+			// Display information about the wav file
+			wavFile.display();
+
+			// Get the number of audio channels in the wav file
+			int numChannels = wavFile.getNumChannels();
+
+			// Create a buffer of 100 frames
+			double[][] buffer = new double[numChannels][100];
+
+			ArrayList<Double> values = new ArrayList<>();
+
+			int framesRead = -1;
+			while (framesRead != 0) {
+				framesRead = wavFile.readFrames(buffer, 100);
+				for( int i = 0; i < framesRead ; i++){
+					values.add(buffer[0][i]);
+				}
+			}
+
+			wavFile.close();
+
+			int V = 10;
+			int N = values.size()/V;
+
+			double [] E = new double[N];
+			for (int n = 0; n < N ; n++){
+				E[n] = 0;
+				for(int i = 0; i < V; i++){
+					E[n] += values.get(n * V + i)*values.get(n * V + i);
+				}
+				E[n] /= V;
+			}
+
+			int L = 10;
+			double max_AE = 0;
+			double mean_AE = 0;
+			double [] AE = new double[N];
+			for (int n = 0; n < N; n++){
+				AE[n] = 0;
+				int Lp = min(N-n, L);
+				for(int l = 0; l < Lp; l++){
+					AE[n] += E[n+l];
+				}
+				AE[n] /= Lp;
+				if(AE[n] > max_AE){
+					max_AE = AE[n];
+				}
+				mean_AE += AE[n]/N;
+			}
+
+			double [] NE = new double[N];
+			for (int i = 0; i < N; i++){
+				NE[i] = AE[i]/max_AE;
+			}
+			double Paudio = 6*mean_AE/max_AE;
+
+			boolean [] phi = new boolean[N];
+			for (int n = 0; n < N; n++){
+				phi[n] = (NE[n] >= Paudio);
+			}
+			ArrayList<Integer> ExcitingClipStart = new ArrayList<>();
+			ArrayList<Integer> ExcitingClipEnd = new ArrayList<>();
+			int n = 0;
+			int start = 0;
+			int Th = 100;
+			while (n < N){
+				start = n;
+				while(n < N && phi[n]){
+					n++;
+				}
+				if(n-start >= Th){
+					ExcitingClipStart.add(start);
+					ExcitingClipEnd.add(n);
+				}
+				while(n < N && !phi[n]){
+					n++;
+				}
+			}
+			System.out.println(ExcitingClipStart);
+			System.out.println(ExcitingClipEnd);
+		}
+		catch (Exception e) {
+			System.err.println(e);
+		}
+	}
 }
