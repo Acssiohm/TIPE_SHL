@@ -13,6 +13,8 @@ public class Main {
 	public static double sq(double x){
 		return x*x;
 	}
+
+
 	public static double closeness_score( double[] clr1_lab, double[] clr2_lab){
 		double[] delta_lab = {clr1_lab[0] - clr2_lab[0], clr1_lab[1] - clr2_lab[1], clr1_lab[2] - clr2_lab[2]};
 		double sq_dist = params.get("lf") * sq(delta_lab[0])
@@ -30,55 +32,51 @@ public class Main {
 		}
 		return  img;
 	}
-	public static void algo_couleurs() {
-		BufferedImage img = open_image("./src/img/carton_rouge.jpg");
+
+	public static double [][] algo_couleurs(String img_file, int nb_block_x, int nb_block_y, boolean show) {
+		BufferedImage img = open_image(img_file);
 		int r, g, b;
 		int pixel_color;
 		ColorHandler ref_color = new ColorHandler(new int[]{params.get("r").intValue(), params.get("g").intValue(), params.get("b").intValue()});
-		int block_size_x = img.getWidth()/4;
-		int block_size_y = img.getHeight()/4;
+
+		int block_size_x = img.getWidth()/nb_block_x;
+		int block_size_y = img.getHeight()/nb_block_y;
 		int Gmin = 58;
 		int Gmax = 68;
-		double [][] scores = new double[4][4];
+		double [][] scores = new double[nb_block_x][nb_block_y];
 		for (int x = 0; x < img.getWidth(); x++) {
 			for (int y = 0; y < img.getHeight(); y++) {
 				ColorHandler c = new ColorHandler(img.getRGB(x, y));
 
-				int [] hsv = c.getHSV();
-				if(hsv[0] >= Gmin && hsv[0] <= Gmax ){
-
-				}
                 double[] clr_lab = c.getLab();
                 double score = closeness_score(clr_lab, ref_color.getLab());
                 //score = (double)r /Math.sqrt( r*r + g*g + b*b );
-                if (score > 0.9) {
+				if (score > 0.9) {
                     score = 1;
+                } else if ( score < 0.5){
+					score = 0;
                 }
                 int blocx = x/(block_size_x+1);
                 int blocy = y/(block_size_y+1);
                 scores[ blocx ][blocy] += Math.sqrt(score);
-                img.setRGB(x, y,  (new ColorHandler(ref_color.opacify(score))).getInt() ) ;
-                if(y/block_size_y == 0 ){
-                    //img.setRGB(x,y, 0xFFFFFF);
+
+				// Afficher le résultat
+				img.setRGB(x, y,  (new ColorHandler(ref_color.opacify(score))).getInt() ) ;
+                if(y%block_size_y == 0 || x%block_size_x < 2 ){
+                    img.setRGB(x,y, 0xFFFFFF);
                 }
 			}
 		}
-        /*
-        for (int x = 0; x < 10; x++){
-            for (int y = 0; y < 10; y++){
-                img.setRGB(x, y, RGBtoInt(ref_color));
-            }
-        }
-        for (int i = 0; i < 4; i++){
-            for(int j = 0; j < 4; j++){
-                System.out.print(scores[i][j]/(block_size_y*block_size_x) + " ");
-            }
-            System.out.println();
-        }
-        //ImageIO.write(img, "jpg", new File("./src/img/carton_rouge_toutrouge.jpg"));
-        */
-		System.out.println(img.getWidth(null));
-		window.showImage(img);
+		if(show)
+			window.showImage(img);
+		return scores;
+	}
+	public static void write_img_to(BufferedImage img, String img_filename) {
+		try {
+			ImageIO.write(img, "jpg", new File("./src/img/"+img_filename+ ".jpg"));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	public enum ColorMode {
 		RGB,
@@ -119,19 +117,12 @@ public class Main {
 		}
 		return res.getInt();
 	}
-	public static BufferedImage algo_contours(){
-		String p = "./src/img/public.png";
-		String cj = "./src/img/carton_jaune.jpg";
-		BufferedImage img = open_image(cj);
-		for (int x = 0; x < img.getWidth(); x++) {
-			for (int y = 0; y < img.getHeight(); y++) {
-				ColorHandler c = new ColorHandler(img.getRGB(x, y));
-				img.setRGB(x,y,c.getInt());
-			}
-		}
-		//window.showImage(img);
-		BufferedImage nextimg = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_RGB);
-		BufferedImage nextnextimg = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_RGB);
+	public static BufferedImage algo_contours( String img_file){
+		BufferedImage temp_img1 = open_image(img_file);
+		int width = temp_img1.getWidth(), height = temp_img1.getHeight();
+		BufferedImage temp_img2 = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+		// Floutage
 		int[][] h = new int[][]
 						{{1,3,4,3,1},
 						{3,9,12,9,3},
@@ -143,12 +134,13 @@ public class Main {
 				//h[i][j] /= 159;
 			}
 		}
-		for (int x = 2; x < nextimg.getWidth()-2; x++) {
-			for (int y = 2; y < nextimg.getHeight()-2; y++) {
+		for (int x = 2; x < width-2; x++) {
+			for (int y = 2; y < height-2; y++) {
 				//nextimg.setRGB(x,y,img.getRGB(x,y));
-				nextimg.setRGB(x,y, convolution(h, 159-16 , img, x, y, ColorMode.RGB));
+				temp_img2.setRGB(x,y, convolution(h, 159-16 , temp_img1, x, y, ColorMode.RGB));
 			}
 		}
+		// contour
 		int [][] d = new int[][]{
 				{-1, 0, 1}
 		};
@@ -157,20 +149,23 @@ public class Main {
 				{0},
 				{1}
 		};
+
+		// Combinaison des deux directions + seuillage
+		int seuil = 70;
 		int val = 0;
-		for (int x = 1; x < nextimg.getWidth()-1; x++) {
-			for (int y = 1; y < nextimg.getHeight()-1; y++) {
-				ColorHandler res1 = new ColorHandler(convolution(d, 1, nextimg, x, y, ColorMode.YCC));
-				ColorHandler res2 = new ColorHandler(convolution(od2, 1, nextimg, x, y, ColorMode.YCC) );
+		for (int x = 1; x < width-1; x++) {
+			for (int y = 1; y < height-1; y++) {
+				ColorHandler res1 = new ColorHandler(convolution(d, 1, temp_img2, x, y, ColorMode.YCC));
+				ColorHandler res2 = new ColorHandler(convolution(od2, 1, temp_img2, x, y, ColorMode.YCC) );
 				int res = (int)Math.sqrt( sq(res1.b) + sq(res2.b));
-				int b = res > 70 ? 1 : 0  ;
+				int b = res > seuil ? 1 : 0  ;
 				val += b;
-				//nextnextimg.setRGB(x,y, (new ColorHandler(val*255, val*255, val*255)).getInt() );
-				nextnextimg.setRGB(x,y, (new ColorHandler(b*255,b*255,b*255)).getInt() );
+				//temp_img1.setRGB(x,y, (new ColorHandler(val*255, val*255, val*255)).getInt() );
+				temp_img1.setRGB(x,y, (new ColorHandler(b*255,b*255,b*255)).getInt() );
 			}
 		}
-		System.out.println(((double)val)/(nextimg.getHeight()*nextimg.getWidth()));
-		return nextnextimg;
+		System.out.println(((double)val)/(height*width));
+		return temp_img1;
 	}
 	public static void HandleCmd(String command) {
 		System.out.println("Prise en compte de : " + command);
@@ -198,11 +193,7 @@ public class Main {
 		} else {
 			System.out.println("Commande non reconnu");
 		}
-		algo_couleurs();
 	}
-
-
-
 	public static void ParamsBaseValue() {
 		params.put("r", 255d);
 		params.put("g", 0d);
@@ -212,19 +203,22 @@ public class Main {
 		params.put("af", 8d);
 		params.put("bf", 1d);
 	}
-
 	public static void main(String[] args) {
 		//new SoundExtracting();
+		String carton_jaune = "./src/img/carton_jaune.jpg";
+		String publique = "./src/img/public.png";
+		String carton_rouge = "./src/img/carton_rouge.jpg";
+		String test_colors = "./src/img/hsv_101.png";
 
 		ParamsBaseValue();
 		window = new Window();
-		window.showImage(algo_contours());
-		//algo_couleurs();
-
+		//window.showImage(algo_contours(carton_jaune));
+		algo_couleurs(carton_rouge, 1, 4, true);
 		Scanner in = new Scanner(System.in);
 		String s = in.nextLine() ;
 		while(!Objects.equals(s, "end")) {
 			HandleCmd(s);
+			algo_contours(carton_rouge);
 			s = in.nextLine();
 		}
 	}
