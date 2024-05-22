@@ -206,6 +206,31 @@ public class Main {
 			window.showImage(temp_img1);
 		return ((double)val)/(height*width);
 	}
+	
+	public static int motion_seuil = 50;
+	public static BufferedImage algo_motion(String imgprev_path, String imgnow_path, String imgpost_path) {
+		BufferedImage imgprev = open_image(imgprev_path);
+		BufferedImage imgnow = open_image(imgnow_path);
+		BufferedImage imgpost = open_image(imgpost_path);
+		
+		int width = temp_img1.getWidth(), height = temp_img1.getHeight();
+		BufferedImage motionmask = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				Color c;
+				int[] cprev = new ColorHandler(imgprev.getRGB(x,y));
+				int[] cnext = new ColorHandler(imgnext.getRGB(x,y));
+				int dif = Math.abs(cprev[0]-cnext[0]) + Math.abs(cprev[1]-cnext[1]) + Math.abs(cprev[2]-cnext[2]);
+				if(dif > motionseuil) {
+					motionmask.setRGB(x,y, Color.RED);
+				} else {
+					motionmask.setRGB(x,y, Color.BLUE);
+				}
+			}
+		}
+		return motionmask;
+	}
+	
 	public static void HandleCmd(String command) {
 		System.out.println("Prise en compte de : " + command);
 
