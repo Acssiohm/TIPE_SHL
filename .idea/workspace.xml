@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b2936413-6145-42e1-87d9-8e56ca6997c7" name="Changes" comment="bcp avancé">
+    <list default="true" id="b2936413-6145-42e1-87d9-8e56ca6997c7" name="Changes" comment="sans fichiers wav/mp4">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SoundExtracting.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SoundExtracting.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/video.mp4" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/video.wav" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,7 +87,7 @@
       <workItem from="1711109911316" duration="5869000" />
       <workItem from="1711714177615" duration="5453000" />
       <workItem from="1716282032752" duration="8859000" />
-      <workItem from="1716363043988" duration="1404000" />
+      <workItem from="1716363043988" duration="3661000" />
     </task>
     <task id="LOCAL-00001" summary="détection de couleurs avec L* a* b*">
       <created>1701432966806</created>
@@ -140,7 +138,14 @@
       <option name="project" value="LOCAL" />
       <updated>1716364210748</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="sans fichiers wav/mp4">
+      <created>1716364729311</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1716364729311</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -176,6 +181,7 @@
     <MESSAGE value="images test" />
     <MESSAGE value="test d'audio" />
     <MESSAGE value="bcp avancé" />
-    <option name="LAST_COMMIT_MESSAGE" value="bcp avancé" />
+    <MESSAGE value="sans fichiers wav/mp4" />
+    <option name="LAST_COMMIT_MESSAGE" value="sans fichiers wav/mp4" />
   </component>
 </project>
