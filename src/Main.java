@@ -33,11 +33,8 @@ public class Main {
 		return  img;
 	}
 
-	public static double [][] algo_couleurs(String img_file, int nb_block_x, int nb_block_y, boolean show) {
+	public static double [][] algo_couleurs(String img_file, ColorHandler ref_color , int nb_block_x, int nb_block_y, boolean show) {
 		BufferedImage img = open_image(img_file);
-		int r, g, b;
-		int pixel_color;
-		ColorHandler ref_color = new ColorHandler(new int[]{params.get("r").intValue(), params.get("g").intValue(), params.get("b").intValue()});
 
 		int block_size_x = img.getWidth()/nb_block_x;
 		int block_size_y = img.getHeight()/nb_block_y;
@@ -213,7 +210,8 @@ public class Main {
 		ParamsBaseValue();
 		window = new Window();
 		//window.showImage(algo_contours(carton_jaune));
-		algo_couleurs(carton_rouge, 1, 4, true);
+		ColorHandler ref_color = new ColorHandler(new int[]{params.get("r").intValue(), params.get("g").intValue(), params.get("b").intValue()});
+		algo_couleurs(carton_rouge, ref_color , 1, 4, true);
 		Scanner in = new Scanner(System.in);
 		String s = in.nextLine() ;
 		while(!Objects.equals(s, "end")) {

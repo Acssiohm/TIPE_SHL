@@ -18,7 +18,7 @@ public class SoundExtracting {
 	public SoundExtracting() {
 		try {
 			// Open the wav file specified as the first argument
-			WavFile wavFile = WavFile.openWavFile(new File("video.wav"));
+			WavFile wavFile = WavFile.openWavFile(new File(""));
 
 			// Display information about the wav file
 			wavFile.display();
