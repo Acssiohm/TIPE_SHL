@@ -1,7 +1,10 @@
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.Kernel;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
@@ -22,53 +25,19 @@ public class Main {
 		double sgm = params.get("sigma");
 		return Math.exp(-sq_dist / sgm);
 	}
-	public static BufferedImage open_image(String name){
+	public static BufferedImage open_image(String name) {
 		BufferedImage img;
 		try {
 			img = ImageIO.read(new File(name));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		return  img;
+		return img;
 	}
-	public static double [][] algo_terrain(String img_file, ColorHandler ref_color , int nb_block_x, int nb_block_y, boolean show) {
+	public static double [][] algo_couleurs(String img_file, ColorHandler ref_color , int nb_block_x, int nb_block_y,
+	                                         boolean show) {
 		BufferedImage img = open_image(img_file);
-
-		int block_size_x = img.getWidth()/nb_block_x;
-		int block_size_y = img.getHeight()/nb_block_y;
-		int Gmin = 58;
-		int Gmax = 68;
-		double [][] scores = new double[nb_block_x][nb_block_y];
-		for (int x = 0; x < img.getWidth(); x++) {
-			for (int y = 0; y < img.getHeight(); y++) {
-				ColorHandler c = new ColorHandler(img.getRGB(x, y));
-
-				double[] clr_lab = c.getLab();
-				double score = closeness_score(clr_lab, ref_color.getLab());
-				//score = (double)r /Math.sqrt( r*r + g*g + b*b );
-				if (score > 0.9) {
-					score = 1;
-				} else if ( score < 0.5){
-					score = 0;
-				}
-				int blocx = x/(block_size_x+1);
-				int blocy = y/(block_size_y+1);
-				scores[ blocx ][blocy] += Math.sqrt(score);
-
-				// Afficher le résultat
-				img.setRGB(x, y,  (new ColorHandler(ref_color.opacify(score))).getInt() ) ;
-				if(y%block_size_y == 0 || x%block_size_x < 2 ){
-					img.setRGB(x,y, 0xFFFFFF);
-				}
-			}
-		}
-		if(show)
-			window.showImage(img);
-		return scores;
-	}
-	public static double [][] algo_couleurs(String img_file, ColorHandler ref_color , int nb_block_x, int nb_block_y, boolean show) {
-		BufferedImage img = open_image(img_file);
-
+		double seuil = 0.5;
 		int block_size_x = img.getWidth()/nb_block_x;
 		int block_size_y = img.getHeight()/nb_block_y;
 
@@ -79,22 +48,20 @@ public class Main {
 
                 double[] clr_lab = c.getLab();
                 double score = closeness_score(clr_lab, ref_color.getLab());
-                //score = (double)r /Math.sqrt( r*r + g*g + b*b );
 				if (score > 0.9) {
 					score = 1;
 				}
+				//System.out.println(score);
+				if ( score < seuil){
+					score = 0;
+				}
 				if(show)
 					img.setRGB(x, y,  (new ColorHandler(ref_color.opacify(score))).getInt() ) ;
-				System.out.println(score);
-				if ( score < 0.5){
-					score = 0;
-                }
-                int blocx = x/(block_size_x+1);
+				int blocx = x/(block_size_x+1);
                 int blocy = y/(block_size_y+1);
                 scores[ blocx ][blocy] += Math.sqrt(score);
 
 				// Afficher le résultat
-
                 if(y%block_size_y == 0 || x%block_size_x < 2 ){
                     img.setRGB(x,y, 0xFFFFFF);
                 }
@@ -108,6 +75,67 @@ public class Main {
 		if(show)
 			window.showImage(img);
 		return scores;
+	}
+
+	public static BufferedImage copyimage(BufferedImage img) {
+		BufferedImage buff = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
+		for (int x = 0; x < img.getWidth(); x++) {
+			for (int y = 0; y < img.getHeight(); y++) {
+				buff.setRGB(x, y, img.getRGB(x, y));
+			}
+		}
+		return buff;
+	}
+
+	public static BufferedImage algo_couleurs(BufferedImage startimg, ColorHandler ref_color) {
+		BufferedImage img = copyimage(startimg);
+		double seuil = 0.7;
+		for (int x = 0; x < img.getWidth(); x++) {
+			for (int y = 0; y < img.getHeight(); y++) {
+				ColorHandler c = new ColorHandler(img.getRGB(x, y));
+
+				double[] clr_lab = c.getLab();
+				double score = closeness_score(clr_lab, ref_color.getLab());
+				//score = (double)r /Math.sqrt( r*r + g*g + b*b );
+				if (score > 0.9) {
+					score = 1;
+				}
+				//System.out.println(score);
+				if ( score < seuil){
+					score = 0;
+				}
+				img.setRGB(x, y,  (new ColorHandler(ref_color.opacify(score))).getInt() ) ;
+			}
+		}
+		return img;
+	}
+	public static void detect_red(String img_file) {
+		BufferedImage img = open_image(img_file);
+		double score;
+		for (int x = 0; x < img.getWidth(); x++) {
+			for (int y = 0; y < img.getHeight(); y++) {
+				ColorHandler c = new ColorHandler(img.getRGB(x, y));
+				score = (double)c.r /Math.sqrt( sq(c.r) + sq(c.g) + sq(c.b) );
+				img.setRGB(x, y,  (new ColorHandler((int)(255*score), 0, 0).getInt() ) );
+			}
+		}
+		window.showImage(img);
+	}
+	public static void detect_yellow(String img_file) {
+		BufferedImage img = open_image(img_file);
+		double score;
+		for (int x = 0; x < img.getWidth(); x++) {
+			for (int y = 0; y < img.getHeight(); y++) {
+				ColorHandler c = new ColorHandler(img.getRGB(x, y));
+				score = ( 255 - c.b)/Math.sqrt( sq(255 - c.r) + sq(255 - c.g) + sq(255 - c.b) );
+				if(score < 0.97 || c.b > 150 ){
+					score = 0;
+					img.setRGB(x, y,  (new ColorHandler((int)(255*score), (int)(255*score), 0).getInt() ) );
+				}
+
+			}
+		}
+		window.showImage(img);
 	}
 	public static void write_img_to(BufferedImage img, String img_filename) {
 		try {
@@ -213,22 +241,68 @@ public class Main {
 		BufferedImage imgnow = open_image(imgnow_path);
 		BufferedImage imgpost = open_image(imgpost_path);
 		
-		int width = temp_img1.getWidth(), height = temp_img1.getHeight();
+		int width = imgnow.getWidth(), height = imgnow.getHeight();
 		BufferedImage motionmask = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				Color c;
-				int[] cprev = new ColorHandler(imgprev.getRGB(x,y));
-				int[] cnext = new ColorHandler(imgnext.getRGB(x,y));
+				int[] cprev = (new ColorHandler(imgprev.getRGB(x,y))).getRGB();
+				int[] cnext = (new ColorHandler(imgpost.getRGB(x,y))).getRGB();
 				int dif = Math.abs(cprev[0]-cnext[0]) + Math.abs(cprev[1]-cnext[1]) + Math.abs(cprev[2]-cnext[2]);
-				if(dif > motionseuil) {
-					motionmask.setRGB(x,y, Color.RED);
+				if(dif > motion_seuil) {
+					motionmask.setRGB(x,y, Color.RED.getRGB());
 				} else {
-					motionmask.setRGB(x,y, Color.BLUE);
+					motionmask.setRGB(x,y, Color.BLUE.getRGB());
 				}
 			}
 		}
 		return motionmask;
+	}
+
+	public static int[] flooding(int[] a) {
+		int n = a.length;
+		int [] res = new int[n];
+		int m = a[0];
+		for( int i = 0; i < n; i++){
+			if( m < a[i])
+				m = a[i];
+			res[i] = m;
+		}
+
+		m = a[n-1];
+		for( int i = n-1; i >= 0; i--){
+			if( m < a[i])
+				m = a[i];
+			if(res[i] > m)
+				res[i] = m;
+		}
+		return res;
+	}
+
+	static int luminosityseuil = 0;
+	public static BufferedImage cutImg(BufferedImage image) {
+		params.put("sigma", 40d);
+		BufferedImage imagegreen = algo_couleurs(image, new ColorHandler(82,112,52));
+		window.showImage(imagegreen);
+		int[] heights = new int[image.getWidth()];
+		int height = image.getHeight();
+		for (int x = 0; x < image.getWidth(); x++) {
+			heights[x] = height;
+			for (int y = 0; y < image.getHeight(); y++) {
+				ColorHandler h = new ColorHandler(imagegreen.getRGB(x, y));
+				if(h.g > luminosityseuil) {
+					heights[x] = height-y;
+					break;
+				}
+			}
+		}
+		heights = flooding(heights);
+		for (int x = 0; x < image.getWidth(); x++) {
+			for (int y = 0; y < height-heights[x]; y++) {
+				image.setRGB(x, y, 0);
+			}
+		}
+		//window.showImage(image);
+		return image;
 	}
 	
 	public static void HandleCmd(String command) {
@@ -275,21 +349,23 @@ public class Main {
 		String carton_rouge = "carton_rouge.jpg";
 		String test_colors = "hsv_101.png";
 
-		String curr_img = "match.jpg";
+		String curr_img = "carton_jaune2.jpeg";
 
 		String curr_path = folder + curr_img;
 		ParamsBaseValue();
 		window = new Window();
 		//window.showImage(algo_contours(carton_jaune));
-		ColorHandler ref_color = new ColorHandler(params.get("r").intValue(), params.get("g").intValue(), params.get("b").intValue());
+		//ColorHandler ref_color = new ColorHandler(params.get("r").intValue(), params.get("g").intValue(), params.get("b").intValue());
 		ColorHandler red = new ColorHandler(255, 0, 0);
 		ColorHandler yellow = new ColorHandler(255, 255, 0);
-		ColorHandler green = new ColorHandler(0, 255, 0);
+		ColorHandler green = new ColorHandler(0, 180, 0);
 
-		double [][] res_red = algo_couleurs(curr_path, red , 1, 4, false);
+		detect_yellow(curr_path);
+		//double [][] res_red = algo_couleurs(curr_path, red , 1, 1, true);
+		/*double res_cont = algo_contours(curr_path, false);
+		params.put("sigma", 200d);
 		double [][] res_yel = algo_couleurs(curr_path, yellow , 1, 4, false);
-		double res_cont = algo_contours(curr_path, false);
-		params.put("sigma", 20d);
+		params.put("sigma", 1500d);
 		double [][] res_gre = algo_couleurs(curr_path, green , 1, 1, true);
 
 		System.out.println( "Rouge : "+res_red[0][0]);
@@ -297,12 +373,14 @@ public class Main {
 		System.out.println( "Vert : " +res_gre[0][0]);
 		System.out.println( "Contour : "+res_cont);
 
+		//cutImg(open_image(curr_path));
+		/*
 		Scanner in = new Scanner(System.in);
 		String s = in.nextLine() ;
 		while(!Objects.equals(s, "end")) {
 			HandleCmd(s);
-			algo_couleurs(curr_path, green, 1, 1, true);
+			System.out.println(algo_couleurs(curr_path, yellow, 1, 1, true)[0][0]);
 			s = in.nextLine();
-		}
+		}*/
 	}
 }

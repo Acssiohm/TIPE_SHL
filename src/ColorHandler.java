@@ -88,5 +88,8 @@ public class ColorHandler {
 		return new double[]{Le, ae, be};
 	}
 
-
+	@Override
+	public String toString() {
+		return "Colorhandler ; r:" + r + ",g:" + g + ",b:" +b;
+	}
 }
